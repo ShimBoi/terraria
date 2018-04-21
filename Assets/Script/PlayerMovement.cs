@@ -11,7 +11,7 @@ public float Timer;
 		rigid = gameObject.GetComponent<Rigidbody2D>();
         Timer = 0;
 	}
-	bool onGround = true;
+	public bool onGround = true;
 	// Update is called once per frame
 	void Update () {
         Timer += Time.deltaTime;
@@ -32,6 +32,9 @@ public float Timer;
 			Timer = 0;
 			GetComponent<Collider2D>().enabled = false;
         }
+		if (Input.GetMouseButtonDown (0)){
+			transform.GetChild (0).GetComponent <Collider2D>().;
+		}
 		RaycastHit hitInfo;
         //hitInfo.transform.gameObject.GetComponent<tree>().IAMMElted();
 		if (Timer > 0.5){
@@ -45,7 +48,7 @@ public float Timer;
 		
 	} 
 
-	void OnCollision2D(Collider2D col){
+	void OnCollisionEnter2D(Collision2D col){
 		if (col.gameObject.CompareTag ("terrain")) {
 				onGround = true;
 			}
