@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour {
 
 Rigidbody2D rigid ;
 public float Timer;
+	public bool Chopping;
 	// Use this for initialization
 	void Start () {
 		rigid = gameObject.GetComponent<Rigidbody2D>();
@@ -33,12 +34,14 @@ public float Timer;
 			GetComponent<Collider2D>().enabled = false;
         }
 		if (Input.GetMouseButtonDown (0)){
-			transform.GetChild (0).GetComponent <Collider2D>().;
+			Debug.Log ("string");
+			transform.GetChild (0).GetComponent <Collider2D>();
+			GetComponent <Animator>().SetTrigger ("Trigger");
 		}
-		RaycastHit hitInfo;
+		//RaycastHit hitInfo;
         //hitInfo.transform.gameObject.GetComponent<tree>().IAMMElted();
-		if (Timer > 0.5){
-            GetComponent<Collider2D>().enabled = true;
+		if (Timer > 0.5) {
+			GetComponent<Collider2D> ().enabled = true;
 		}
         // GetComponent<Collider2D>().enabled=! Input.GetKey("s"); // true when press down
 
