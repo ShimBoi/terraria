@@ -4,8 +4,8 @@ using UnityEngine;
 
 public enum AIState
 {
-	MOVE_LEFT ,
-	MOVE_RIGHT
+	ATTACK,
+	MOVE
 }
 
 public class EnemyMovement : MonoBehaviour {
@@ -15,18 +15,19 @@ public float Timer;
 	public bool isRight;
 	public List<Transform> listpoint;
 	public bool Chopping;
-	public AIState state = AIState.MOVE_LEFT;
-	public AIState currentstate {
-		
+	public AIState state = AIState.MOVE;
+	public AIState currentstate {		
 		set{
 			state = value;
 
-			if (state == AIState.MOVE_LEFT) {
-				isRight = false;
-				transform.Rotate (new Vector3(0,180,0));
-			}else if (state == AIState.MOVE_RIGHT) {
-				isRight = true;
-				transform.Rotate (new Vector3(0,180,0)); 
+			if (state == AIState.MOVE) {
+				gameObject.GetComponent<Animator> ().SetBool ("Attacking", false);
+
+
+				Debug.Log("moving");
+			}else if (value == AIState.ATTACK){
+				gameObject.GetComponent<Animator> ().SetBool ("Attacking", true);
+				Debug.Log("anything");
 			}
 		}
 	}
@@ -35,25 +36,31 @@ public float Timer;
 		rigid = gameObject.GetComponent<Rigidbody2D>();
         Timer = 0;
 		isRight = true;
-		Debug.Log (AIState.MOVE_LEFT);
+		Debug.Log (AIState.MOVE);
 		currentDestination = listpoint[0];
 	}
 	public bool onGround = true;
 	// Update is called once per frame
 	void Update () {
-
-		if (Vector3.Distance (currentDestination.position, transform.position)<1.5) {
-			isRight = !isRight;
-			if (isRight) {
-				state = AIState.MOVE_RIGHT;
-			}else{
-				state = AIState.MOVE_LEFT;
+		if (state != AIState.ATTACK) {
+			// decide which side it is
+			if (transform.position.x < currentDestination.position.x){
+				isRight = true;
+				transform.rotation = Quaternion.Euler(new  Vector3(0,0,0));
+			} else{
+				isRight = false;
+				transform.rotation = Quaternion.Euler(new  Vector3(0,180,0));
 			}
-			currentDestination =listpoint[ (listpoint.IndexOf (currentDestination) + 1) % listpoint.Count];
-			transform.Rotate (new Vector3(0,180,0));
-		}
-		MoveCharacter (isRight);
 
+			// Detect the disatance
+			if (Vector3.Distance (currentDestination.position, transform.position)<1.5) {
+				currentstate = AIState.MOVE;
+				currentDestination =listpoint[ (listpoint.IndexOf (currentDestination) + 1) % listpoint.Count];
+			}
+			MoveCharacter (isRight);
+		}else{
+			
+		}
 //        Timer += Time.deltaTime;
 //		if (Input.GetKeyDown("w") && onGround == true){
 //
@@ -98,4 +105,18 @@ public float Timer;
 			}
 
 	}
+	void OnTriggerEnter2D(Collider2D col){
+		if(col.gameObject.CompareTag ("character")){
+			currentstate = AIState.ATTACK;
+		
+		}
+	
+	}
+	void OnTriggerExit2D(Collider2D col){
+		if (col.gameObject.CompareTag ("character")) {
+			currentstate = AIState.MOVE;
+		}
+	}
 }
+
+
